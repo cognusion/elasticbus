@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'mongo'
+require 'bson'
 require 'json'
 
 include Mongo # Import mongo symbols for convenience
@@ -56,7 +57,7 @@ class MongoTopic < Topic
     colls = @db.collection_names
     topics = Array.new
     colls.each do |coll|
-      coll.match(/^(\w+)_topic$/) do |topic|
+      coll.match(/^(.*)_topic$/) do |topic|
         topics.push(topic[1])
       end
     end
@@ -67,8 +68,14 @@ class MongoTopic < Topic
     !!@connections.count
   end
   
+  def format_message(message, event = false)
+    message = "data: #{message}\n\n"
+    message = "event: #{event}\n#{message}" if event
+    return message
+  end
+
   def notify(message)
-    @connections.each { |out| out << "data: #{message}\n\n" }
+    @connections.each { |out| out << self.format_message(message) }
   end
   
   def refresh(notify_connections = false)
@@ -98,6 +105,7 @@ class MongoTopic < Topic
   
   def read(filter = nil, limit = nil)
     messages = Array.new
+    
     if filter.nil?
       # All of it
       @coll.find.each { |row| 
@@ -105,6 +113,17 @@ class MongoTopic < Topic
         messages.push(row["m"]) if row.has_key?("m")
         break if limit == 0
       }
+    elsif filter.match(/^since:\d+$/)
+      # All of it since the epoch date specified
+      filter.match(/^since:(\d+)$/) do |epoch|
+      time = Time.at(epoch[1].to_i)
+      time_id = BSON::ObjectId.from_time(time,{ :unique => false })
+      @coll.find({'_id' => {'$gt' => time_id}}).each { |row|
+        limit -= 1 unless limit.nil?
+        messages.push(row["m"]) if row.has_key?("m")
+        break if limit == 0
+      }
+      end
     else
       # Filter
       # TODO: Intuitive filtering
@@ -123,8 +142,9 @@ db = MongoClient.new("localhost", 27017).db("elasticbus")
 
 m = MongoTopic.new('cooking',db)
 
-puts m.count
+puts m.read("since:1234567890")
 
+=begin
 foods = Hash.new()
 foods[:cake] = :lie
 foods[:pie] =  :yum
