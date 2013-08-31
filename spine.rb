@@ -3,6 +3,8 @@
 require 'mongo'
 require 'bson'
 require 'json'
+require 'openssl'
+require 'base64'
 
 include Mongo # Import mongo symbols for convenience
 
@@ -31,7 +33,7 @@ end
 
 class MongoTopic < Topic
  
-  attr_accessor :connections
+  attr_accessor :connections, :HEARTBEAT
   
   def initialize(name, db)
     super(name)
@@ -48,6 +50,7 @@ class MongoTopic < Topic
     end
     
     @connections = Array.new
+    @HEARTBEAT = "\0" #"<!-- OK -->\n"
     self.refresh
     
     ObjectSpace.define_finalizer(self, proc { @coll = nil; @connections=nil; @db=nil } )
@@ -137,12 +140,83 @@ class MongoTopic < Topic
   end
 end
 
+class MongoChat < MongoTopic
+  
+  def initialize(room, db)
+    super(room,db)
+    
+    @HEARTBEAT = "<!-- OK -->\n"
+    
+  end
+  
+  def format_message(message, from, style, user = nil)
+    # TODO: wrap it in an HTML block, make sure it's clean
+    # user = nil goes to all subscribers
+  end
+  
+end
+
+class SecureToken
+  
+  attr_accessor :key, :iv
+  
+  def initialize(key, iv)
+    @key = key
+    @iv = iv
+
+    @aes = OpenSSL::Cipher.new("AES-256-CBC")
+    @prng = Random.new
+    
+  end
+  
+  def build_token(payload)
+ 
+    payload = [payload, Time.now.to_i, @prng.rand(10..9999)].join("\t")
+    
+    @aes.encrypt
+    @aes.key = @key
+    @aes.iv = @iv
+    token = @aes.update(payload) + @aes.final
+    return Base64.urlsafe_encode64(token)
+  end
+  
+  # Returns false if the token is too old, else returns the payload
+  def verify_token(token, time_tolerance_seconds = 60)
+    payload, time, nonce = self.extract_token(token)
+    return false if time.to_i+time_tolerance_seconds.to_i < Time.now.to_i
+    return payload
+  end
+  
+  def extract_token(token)
+    
+    token = Base64.urlsafe_decode64(token)
+    
+    @aes.decrypt
+    @aes.key = key
+    @aes.iv = iv
+    clear_token = @aes.update(token) + @aes.final
+    return clear_token.split("\t")
+  end
+end
+
+=begin
+require 'digest/sha2'
+iv =  Digest::SHA2.new(256).digest("FBDfsdfrvyh8i67u5R^V$qc34x123e1w4rcq$Wtaw4twyj")
+key = Digest::SHA2.new(256).digest("asasjhsdfFERt45y4hg3$&kjgfgf$Wsdcvbtymkhl8*r6t")
+
+t = SecureToken.new(key,iv)
+
+token = t.build_token("I would like a token please")
+
+puts token
+puts t.verify_token(token)
+
 =begin
 db = MongoClient.new("localhost", 27017).db("elasticbus")
 
 m = MongoTopic.new('cooking',db)
 
-puts m.read("since:1234567890")
+puts m.connections
 
 =begin
 foods = Hash.new()
