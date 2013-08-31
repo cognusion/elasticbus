@@ -156,46 +156,72 @@ class MongoChat < MongoTopic
   
 end
 
-class SecureToken
+# Simple token. 
+class Token
+  attr_accessor :payload, :timestamp, :nonce, :separator
   
-  attr_accessor :key, :iv
-  
-  def initialize(key, iv)
-    @key = key
-    @iv = iv
-
-    @aes = OpenSSL::Cipher.new("AES-256-CBC")
-    @prng = Random.new
-    
+  def initialize
+    @separator = "\t"
+    @payload = nil
+    @timestamp = Time.now.utc.to_i
+    @nonce = Random.new.rand(10..9999)
   end
   
-  def build_token(payload)
- 
-    payload = [payload, Time.now.to_i, @prng.rand(10..9999)].join("\t")
+  def to_s
+    [@payload, @timestamp, @nonce].join(@separator)
+  end
+  
+  def to_a
+    [@payload, @timestamp, @nonce]
+  end
+  
+  def from_a(an_array)
+    @payload, @timestamp, @nonce = an_array
+  end
+  
+  def from_s(a_string)
+    @payload, @timestamp, @nonce = a_string.split(@separator)
+  end
+  
+end
+
+# Makes a good webtoken. Can be used with a shared secret to send
+# commands via URIs, create session tokens, etc.
+class SecureToken < Token
+  
+  def initialize(key, iv)
+    super()
     
+    @key = key
+    @iv = iv
+    @aes = OpenSSL::Cipher.new("AES-256-CBC")
+  end
+  
+  def to_e(base64_encode = false)
     @aes.encrypt
     @aes.key = @key
     @aes.iv = @iv
-    token = @aes.update(payload) + @aes.final
+    token = @aes.update(self.to_s) + @aes.final
+    return token unless base64_encode
     return Base64.urlsafe_encode64(token)
   end
   
-  # Returns false if the token is too old, else returns the payload
-  def verify_token(token, time_tolerance_seconds = 60)
-    payload, time, nonce = self.extract_token(token)
-    return false if time.to_i+time_tolerance_seconds.to_i < Time.now.to_i
-    return payload
+  # Returns false if the token is too old, or test_secret doesn't match (if supplied) 
+  # else true
+  def verify(test_secret = false, time_tolerance_seconds = 60)
+    return false if @timestamp.to_i+time_tolerance_seconds.to_i < Time.now.utc.to_i
+    return !!(@payload == test_secret) if test_secret 
+    return true
   end
   
-  def extract_token(token)
+  def from_token(token,base64_decode = false)
     
-    token = Base64.urlsafe_decode64(token)
+    token = Base64.urlsafe_decode64(token) if base64_decode
     
     @aes.decrypt
-    @aes.key = key
-    @aes.iv = iv
-    clear_token = @aes.update(token) + @aes.final
-    return clear_token.split("\t")
+    @aes.key = @key
+    @aes.iv = @iv
+    self.from_s @aes.update(token) + @aes.final
   end
 end
 
@@ -206,10 +232,16 @@ key = Digest::SHA2.new(256).digest("asasjhsdfFERt45y4hg3$&kjgfgf$Wsdcvbtymkhl8*r
 
 t = SecureToken.new(key,iv)
 
-token = t.build_token("I would like a token please")
+t.payload = "I would like a token please"
 
-puts token
-puts t.verify_token(token)
+puts t.to_s
+
+token = t.to_e(true)
+
+x = SecureToken.new(key,iv)
+x.from_token(token,true)
+puts x.to_s()
+puts x.verify("I would like a token please")
 
 =begin
 db = MongoClient.new("localhost", 27017).db("elasticbus")
