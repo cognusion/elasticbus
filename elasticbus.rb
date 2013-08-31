@@ -3,16 +3,20 @@
 # gem install sinatra sinatra-contrib thin bson_ext mongodb
 
 require 'sinatra'
+require 'sinatra/streaming'
+require 'sinatra/cookies'
 require 'mongo'
 require 'json'
+require 'digest/sha2'
 require './spine'
 include Mongo # Import mongo symbols for convenience
-
-HEARTBEAT = "\0" #"<!-- OK -->\n"
 
 configure do
   set :server, :thin
 end
+
+iv =  Digest::SHA2.new(256).digest("FBDfsdfrvyh8i67u5R^V$qc34x123e1w4rcq$Wtaw4twyj")
+key = Digest::SHA2.new(256).digest("asasjhsdfFERt45y4hg3$&kjgfgf$Wsdcvbtymkhl8*r6t")
 
 db = MongoClient.new("localhost", 27017).db("elasticbus")
 
@@ -29,12 +33,6 @@ end
 def blast(topics,topic,message)
   topics[topic] = MongoTopic.new(topic,db) unless topics.has_key?(topic)
   topics[topic].add(message)
-end
-  
-def format_message(message, event = false)
-  message = "data: #{message}\n\n"
-  message = "event: #{event}\n#{message}" if event
-  return message
 end
 
 get '/' do
@@ -122,11 +120,30 @@ get '/subscribe/:topic/:epoch_stamp', :provides => 'text/event-stream' do |topic
 
 end
 
+get '/auth/set/:secret' do |secret|
+  tokens = SecureToken.new(key,iv)
+  tokens.payload = secret
+  cookies[:session] = tokens.to_e(true)
+  204
+end
+
+get '/auth/check/:secret' do |secret|
+  return 400, "No token" unless cookies.has_key?(:session)
+  tokens = SecureToken.new(key,iv)
+  tokens.from_token(cookies[:session],true)
+  
+  unless tokens.verify(secret,60*60)
+    return 401, "Unauthorized"
+  else
+    "OK: #{secret}"
+  end
+end
+
 get '/subscribe/:topic', :provides => 'text/event-stream' do |topic|
   topics[topic] = MongoTopic.new(topic,db) unless topics.has_key?(topic)
     
   stream :keep_open do |out|
-    EventMachine::PeriodicTimer.new(20) { out << HEARTBEAT }
+    EventMachine::PeriodicTimer.new(20) { out << topics[topic].HEARTBEAT }
     topics[topic].connections << out
     out.callback { topics[topic].connections.delete(out) }
   end
