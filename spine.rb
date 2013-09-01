@@ -5,6 +5,7 @@ require 'bson'
 require 'json'
 require 'openssl'
 require 'base64'
+require 'sanitize'
 
 include Mongo # Import mongo symbols for convenience
 
@@ -159,10 +160,10 @@ class MongoChat < MongoTopic
     prefix += " #{user}" unless user.nil?
       
     suffix = "</p>"
-    
-    # TODO: Sanitize message. Strip unclosed HTML, strip embeds, strip anything bad,
-    #  strip HTML comments, strip DIV, JS, etc.
-    # Maybe only allow simple B, I, IMG SRC, A HREF ?
+
+    # TODO: Play with the presets, and customize if needed
+    message = Sanitize.clean(message, Sanitize::Config::RELAXED)
+
     return prefix + message + suffix
   end
   
