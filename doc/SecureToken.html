@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+
+<title>class SecureToken - RDoc Documentation</title>
+
+<link type="text/css" media="screen" href="./rdoc.css" rel="stylesheet">
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "./";
+</script>
+
+<script type="text/javascript" charset="utf-8" src="./js/jquery.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/navigation.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/search_index.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/search.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/searcher.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/darkfish.js"></script>
+
+
+<body id="top" class="class">
+<nav id="metadata">
+  <nav id="home-section" class="section">
+  <h3 class="section-header">
+    <a href="./index.html">Home</a>
+    <a href="./table_of_contents.html#classes">Classes</a>
+    <a href="./table_of_contents.html#methods">Methods</a>
+  </h3>
+</nav>
+
+
+  <nav id="search-section" class="section project-section" class="initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <h3 class="section-header">
+      <input type="text" name="search" placeholder="Search" id="search-field"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </h3>
+  </form>
+
+  <ul id="search-results" class="initially-hidden"></ul>
+</nav>
+
+
+  
+
+  <div id="file-metadata">
+    <nav id="file-list-section" class="section">
+  <h3 class="section-header">Defined In</h3>
+  <ul>
+    <li>spine.rb
+  </ul>
+</nav>
+
+    
+  </div>
+
+  <div id="class-metadata">
+    
+    <nav id="parent-class-section" class="section">
+  <h3 class="section-header">Parent</h3>
+  
+  <p class="link"><a href="Token.html">Token</a>
+  
+</nav>
+
+    
+    
+    <!-- Method Quickref -->
+<nav id="method-list-section" class="section">
+  <h3 class="section-header">Methods</h3>
+
+  <ul class="link-list">
+    
+    <li class="calls-super" ><a href="#method-c-new">::new</a>
+    
+    <li ><a href="#method-i-from_token">#from_token</a>
+    
+    <li ><a href="#method-i-to_e">#to_e</a>
+    
+    <li ><a href="#method-i-verify">#verify</a>
+    
+  </ul>
+</nav>
+
+  </div>
+
+  <div id="project-metadata">
+    <nav id="fileindex-section" class="section project-section">
+  <h3 class="section-header">Pages</h3>
+
+  <ul>
+  
+    <li class="file"><a href="./Notes_md.html">Notes</a>
+  
+    <li class="file"><a href="./README_md.html">README</a>
+  
+    <li class="file"><a href="./doc/created_rid.html">created.rid</a>
+  
+  </ul>
+</nav>
+
+    <nav id="classindex-section" class="section project-section">
+  <h3 class="section-header">Class and Module Index</h3>
+
+  <ul class="link-list">
+  
+    <li><a href="./Digest.html">Digest</a>
+  
+    <li><a href="./EventMachine.html">EventMachine</a>
+  
+    <li><a href="./MongoChat.html">MongoChat</a>
+  
+    <li><a href="./MongoTopic.html">MongoTopic</a>
+  
+    <li><a href="./Object.html">Object</a>
+  
+    <li><a href="./SecureToken.html">SecureToken</a>
+  
+    <li><a href="./Token.html">Token</a>
+  
+    <li><a href="./Topic.html">Topic</a>
+  
+  </ul>
+</nav>
+
+  </div>
+</nav>
+
+<div id="documentation">
+  <h1 class="class">class SecureToken</h1>
+
+  <div id="description" class="description">
+    
+<p>Makes a good webtoken. Can be used with a shared secret to send commands
+via URIs, create session tokens, etc.</p>
+
+  </div><!-- description -->
+
+  
+  
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+
+    
+
+    <!-- Methods -->
+    
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section section">
+      <h3 class="section-header">Public Class Methods</h3>
+
+    
+      <div id="method-c-new" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">new</span><span
+            class="method-args">(key, iv)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+            <div class="method-calls-super">
+              Calls superclass method
+              <a href="Token.html#method-c-new">Token.new</a>
+            </div>
+          
+
+          
+          <div class="method-source-code" id="new-source">
+            <pre><span class="ruby-comment"># File spine.rb, line 204</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">key</span>, <span class="ruby-identifier">iv</span>)
+  <span class="ruby-keyword">super</span>()
+  
+  <span class="ruby-ivar">@key</span> = <span class="ruby-identifier">key</span>
+  <span class="ruby-ivar">@iv</span> = <span class="ruby-identifier">iv</span>
+  <span class="ruby-ivar">@aes</span> = <span class="ruby-constant">OpenSSL</span><span class="ruby-operator">::</span><span class="ruby-constant">Cipher</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&quot;AES-256-CBC&quot;</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- new-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- new-method -->
+
+    
+    </section><!-- public-class-method-details -->
+  
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section section">
+      <h3 class="section-header">Public Instance Methods</h3>
+
+    
+      <div id="method-i-from_token" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">from_token</span><span
+            class="method-args">(token,base64_decode = false)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="from_token-source">
+            <pre><span class="ruby-comment"># File spine.rb, line 229</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">from_token</span>(<span class="ruby-identifier">token</span>,<span class="ruby-identifier">base64_decode</span> = <span class="ruby-keyword">false</span>)
+  
+  <span class="ruby-identifier">token</span> = <span class="ruby-constant">Base64</span>.<span class="ruby-identifier">urlsafe_decode64</span>(<span class="ruby-identifier">token</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">base64_decode</span>
+  
+  <span class="ruby-ivar">@aes</span>.<span class="ruby-identifier">decrypt</span>
+  <span class="ruby-ivar">@aes</span>.<span class="ruby-identifier">key</span> = <span class="ruby-ivar">@key</span>
+  <span class="ruby-ivar">@aes</span>.<span class="ruby-identifier">iv</span> = <span class="ruby-ivar">@iv</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">from_s</span> <span class="ruby-ivar">@aes</span>.<span class="ruby-identifier">update</span>(<span class="ruby-identifier">token</span>) <span class="ruby-operator">+</span> <span class="ruby-ivar">@aes</span>.<span class="ruby-identifier">final</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- from_token-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- from_token-method -->
+
+    
+      <div id="method-i-to_e" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">to_e</span><span
+            class="method-args">(base64_encode = false)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="to_e-source">
+            <pre><span class="ruby-comment"># File spine.rb, line 212</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">to_e</span>(<span class="ruby-identifier">base64_encode</span> = <span class="ruby-keyword">false</span>)
+  <span class="ruby-ivar">@aes</span>.<span class="ruby-identifier">encrypt</span>
+  <span class="ruby-ivar">@aes</span>.<span class="ruby-identifier">key</span> = <span class="ruby-ivar">@key</span>
+  <span class="ruby-ivar">@aes</span>.<span class="ruby-identifier">iv</span> = <span class="ruby-ivar">@iv</span>
+  <span class="ruby-identifier">token</span> = <span class="ruby-ivar">@aes</span>.<span class="ruby-identifier">update</span>(<span class="ruby-keyword">self</span>.<span class="ruby-identifier">to_s</span>) <span class="ruby-operator">+</span> <span class="ruby-ivar">@aes</span>.<span class="ruby-identifier">final</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">token</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">base64_encode</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-constant">Base64</span>.<span class="ruby-identifier">urlsafe_encode64</span>(<span class="ruby-identifier">token</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- to_e-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- to_e-method -->
+
+    
+      <div id="method-i-verify" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">verify</span><span
+            class="method-args">(test_secret = false, time_tolerance_seconds = 60)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Returns false if the token is too old, or test_secret doesn&#39;t match (if
+supplied)  else true</p>
+          
+          
+
+          
+          <div class="method-source-code" id="verify-source">
+            <pre><span class="ruby-comment"># File spine.rb, line 223</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">verify</span>(<span class="ruby-identifier">test_secret</span> = <span class="ruby-keyword">false</span>, <span class="ruby-identifier">time_tolerance_seconds</span> = <span class="ruby-value">60</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@timestamp</span>.<span class="ruby-identifier">to_i</span><span class="ruby-operator">+</span><span class="ruby-identifier">time_tolerance_seconds</span>.<span class="ruby-identifier">to_i</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">utc</span>.<span class="ruby-identifier">to_i</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-operator">!</span><span class="ruby-operator">!</span>(<span class="ruby-ivar">@payload</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">test_secret</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">test_secret</span> 
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- verify-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- verify-method -->
+
+    
+    </section><!-- public-instance-method-details -->
+  
+  </section><!-- 5Buntitled-5D -->
+
+</div><!-- documentation -->
+
+
+<footer id="validator-badges">
+  <p><a href="http://validator.w3.org/check/referer">[Validate]</a>
+  <p>Generated by <a href="https://github.com/rdoc/rdoc">RDoc</a> 4.0.0.
+  <p>Generated with the <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish Rdoc Generator</a> 3.
+</footer>
+
