@@ -418,6 +418,7 @@
   
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">filter</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-comment"># All of it</span>
+    
     <span class="ruby-ivar">@coll</span>.<span class="ruby-identifier">find</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span> 
       <span class="ruby-identifier">limit</span> <span class="ruby-operator">-=</span> <span class="ruby-value">1</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">limit</span>.<span class="ruby-identifier">nil?</span>
       <span class="ruby-identifier">messages</span>.<span class="ruby-identifier">push</span>(<span class="ruby-identifier">row</span>[<span class="ruby-string">&quot;m&quot;</span>]) <span class="ruby-keyword">if</span> <span class="ruby-identifier">row</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-string">&quot;m&quot;</span>)
@@ -425,6 +426,7 @@
     }
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">filter</span>.<span class="ruby-identifier">match</span>(<span class="ruby-regexp">/^since:\d+$/</span>)
     <span class="ruby-comment"># All of it since the epoch date specified</span>
+    
     <span class="ruby-identifier">filter</span>.<span class="ruby-identifier">match</span>(<span class="ruby-regexp">/^since:(\d+)$/</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">epoch</span><span class="ruby-operator">|</span>
     <span class="ruby-identifier">time</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">at</span>(<span class="ruby-identifier">epoch</span>[<span class="ruby-value">1</span>].<span class="ruby-identifier">to_i</span>)
     <span class="ruby-identifier">time_id</span> = <span class="ruby-constant">BSON</span><span class="ruby-operator">::</span><span class="ruby-constant">ObjectId</span>.<span class="ruby-identifier">from_time</span>(<span class="ruby-identifier">time</span>,{ <span class="ruby-value">:unique</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">false</span> })
@@ -436,6 +438,7 @@
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">else</span>
     <span class="ruby-comment"># Filter</span>
+    
     <span class="ruby-comment"># TODO: Intuitive filtering</span>
     <span class="ruby-ivar">@coll</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">filter</span>).<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span> 
       <span class="ruby-identifier">limit</span> <span class="ruby-operator">-=</span> <span class="ruby-value">1</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">limit</span>.<span class="ruby-identifier">nil?</span>

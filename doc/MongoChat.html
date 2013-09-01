@@ -173,7 +173,7 @@
 
           
           <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File spine.rb, line 145</span>
+            <pre><span class="ruby-comment"># File spine.rb, line 148</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">room</span>, <span class="ruby-identifier">db</span>)
   <span class="ruby-keyword">super</span>(<span class="ruby-identifier">room</span>,<span class="ruby-identifier">db</span>)
   
@@ -215,10 +215,19 @@
 
           
           <div class="method-source-code" id="format_message-source">
-            <pre><span class="ruby-comment"># File spine.rb, line 152</span>
+            <pre><span class="ruby-comment"># File spine.rb, line 155</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">format_message</span>(<span class="ruby-identifier">message</span>, <span class="ruby-identifier">from</span>, <span class="ruby-identifier">style</span>, <span class="ruby-identifier">user</span> = <span class="ruby-keyword">nil</span>)
-  <span class="ruby-comment"># TODO: wrap it in an HTML block, make sure it&#39;s clean</span>
   <span class="ruby-comment"># user = nil goes to all subscribers</span>
+  <span class="ruby-identifier">prefix</span> = <span class="ruby-node">&quot;&lt;p&gt;&lt;b&gt;#{from} #{style} to&quot;</span>
+  <span class="ruby-identifier">prefix</span> <span class="ruby-operator">+=</span> <span class="ruby-string">&quot; all users&lt;/b&gt;&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">user</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-identifier">prefix</span> <span class="ruby-operator">+=</span> <span class="ruby-node">&quot; #{user}&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">user</span>.<span class="ruby-identifier">nil?</span>
+    
+  <span class="ruby-identifier">suffix</span> = <span class="ruby-string">&quot;&lt;/p&gt;&quot;</span>
+  
+  <span class="ruby-comment"># TODO: Sanitize message. Strip unclosed HTML, strip embeds, strip anything bad,</span>
+  <span class="ruby-comment">#  strip HTML comments, strip DIV, JS, etc.</span>
+  <span class="ruby-comment"># Maybe only allow simple B, I, IMG SRC, A HREF ?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">prefix</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">message</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">suffix</span>
 <span class="ruby-keyword">end</span></pre>
           </div><!-- format_message-source -->
           

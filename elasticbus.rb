@@ -22,6 +22,7 @@ db = MongoClient.new("localhost", 27017).db("elasticbus")
 
 topics = Hash.new
 topics["general"] = MongoTopic.new("general",db) # Make sure we always have our base channel
+topics["registrations"] = MongoTopic.new("registrations",db)
 
   # TODO: Rethink broadcasts
 def broadcast(topics,message)
@@ -43,7 +44,6 @@ get '/' do
   -- Frank Sinatra<br></center>"
 end
 
-=begin
 get '/register/:name' do |name|
   coll = db.collection("registrations")
   
@@ -51,6 +51,11 @@ get '/register/:name' do |name|
 
   coll.update({"name" => name}, reg, { :upsert => true })
   topics["registrations"].add(name) if topics.has_key?("registrations")
+    
+  tokens = SecureToken.new(key,iv)
+  tokens.payload = name
+  cookies[:session] = tokens.to_e(true)
+    
   "You registered '#{name}'"
 end
 
@@ -61,6 +66,11 @@ get '/register/:type/:name' do |type,name|
 
   coll.update({"name" => name}, reg, { :upsert => true })
   topics["registrations"].add("#{type} #{name}") if topics.has_key?("registrations")
+    
+  tokens = SecureToken.new(key,iv)
+  tokens.payload = "#{type}:#{name}"
+  cookies[:session] = tokens.to_e(true)
+    
   "You registered a '#{type}' called '#{name}'"
 end
 
@@ -101,7 +111,6 @@ get '/registrations/:type' do |type|
   end
   
 end
-=end
 
 get '/subscribe/:topic/:epoch_stamp', :provides => 'text/event-stream' do |topic,epoch|
   topics[topic] = MongoTopic.new(topic,db) unless topics.has_key?(topic)

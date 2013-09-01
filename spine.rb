@@ -111,6 +111,7 @@ class MongoTopic < Topic
     
     if filter.nil?
       # All of it
+      
       @coll.find.each { |row| 
         limit -= 1 unless limit.nil?
         messages.push(row["m"]) if row.has_key?("m")
@@ -118,6 +119,7 @@ class MongoTopic < Topic
       }
     elsif filter.match(/^since:\d+$/)
       # All of it since the epoch date specified
+      
       filter.match(/^since:(\d+)$/) do |epoch|
       time = Time.at(epoch[1].to_i)
       time_id = BSON::ObjectId.from_time(time,{ :unique => false })
@@ -129,6 +131,7 @@ class MongoTopic < Topic
       end
     else
       # Filter
+      
       # TODO: Intuitive filtering
       @coll.find(filter).each { |row| 
         limit -= 1 unless limit.nil?
@@ -150,8 +153,17 @@ class MongoChat < MongoTopic
   end
   
   def format_message(message, from, style, user = nil)
-    # TODO: wrap it in an HTML block, make sure it's clean
     # user = nil goes to all subscribers
+    prefix = "<p><b>#{from} #{style} to"
+    prefix += " all users</b>" if user.nil?
+    prefix += " #{user}" unless user.nil?
+      
+    suffix = "</p>"
+    
+    # TODO: Sanitize message. Strip unclosed HTML, strip embeds, strip anything bad,
+    #  strip HTML comments, strip DIV, JS, etc.
+    # Maybe only allow simple B, I, IMG SRC, A HREF ?
+    return prefix + message + suffix
   end
   
 end

@@ -181,7 +181,7 @@
 
           
           <div class="method-source-code" id="blast-source">
-            <pre><span class="ruby-comment"># File elasticbus.rb, line 33</span>
+            <pre><span class="ruby-comment"># File elasticbus.rb, line 34</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">blast</span>(<span class="ruby-identifier">topics</span>,<span class="ruby-identifier">topic</span>,<span class="ruby-identifier">message</span>)
   <span class="ruby-identifier">topics</span>[<span class="ruby-identifier">topic</span>] = <span class="ruby-constant">MongoTopic</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">topic</span>,<span class="ruby-identifier">db</span>) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">topics</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-identifier">topic</span>)
   <span class="ruby-identifier">topics</span>[<span class="ruby-identifier">topic</span>].<span class="ruby-identifier">add</span>(<span class="ruby-identifier">message</span>)
@@ -215,7 +215,7 @@
 
           
           <div class="method-source-code" id="broadcast-source">
-            <pre><span class="ruby-comment"># File elasticbus.rb, line 27</span>
+            <pre><span class="ruby-comment"># File elasticbus.rb, line 28</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">broadcast</span>(<span class="ruby-identifier">topics</span>,<span class="ruby-identifier">message</span>)
   <span class="ruby-identifier">topics</span>.<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">topic</span><span class="ruby-operator">|</span>
     <span class="ruby-identifier">topics</span>[<span class="ruby-identifier">topic</span>].<span class="ruby-identifier">add</span>(<span class="ruby-node">&quot;event: broadcast\ndata: #{message}\n\n&quot;</span>)
