@@ -9,6 +9,7 @@ require 'mongo'
 require 'json'
 require 'digest/sha2'
 require './spine'
+require './tokens'
 include Mongo # Import mongo symbols for convenience
 
 configure do
