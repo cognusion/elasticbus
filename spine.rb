@@ -21,7 +21,7 @@ class Topic
     
   end
 
-  def add(entry)
+  def add(entry, options = nil)
     @history.push(entry)
     @count += 1
   end
@@ -99,23 +99,35 @@ class MongoTopic < Topic
     end
   end
   
-  def add(entry)
+  def add(entry, options = nil)
     doc = Hash.new
-    doc['m'] = entry
+    if(options.has_key?(:raw) and options[:raw] == true) 
+      doc = entry
+    else
+      doc['m'] = entry
+    end
     @coll.insert(doc)
     @last_updated = Time.now
     self.refresh(true)
   end
   
-  def read(filter = nil, limit = nil)
+  def read(options = nil)
     messages = Array.new
+    
+    filter = options[:filter] || nil
+    limit  = options[:limit]  || nil
+    raw    = options[:raw]    || nil
     
     if filter.nil?
       # All of it
       
       @coll.find.each { |row| 
         limit -= 1 unless limit.nil?
-        messages.push(row["m"]) if row.has_key?("m")
+        if raw
+          messages.push(row)
+        else 
+          messages.push(row["m"]) if row.has_key?("m")
+        end
         break if limit == 0
       }
     elsif filter.match(/^since:\d+$/)
@@ -126,7 +138,11 @@ class MongoTopic < Topic
       time_id = BSON::ObjectId.from_time(time,{ :unique => false })
       @coll.find({'_id' => {'$gt' => time_id}}).each { |row|
         limit -= 1 unless limit.nil?
-        messages.push(row["m"]) if row.has_key?("m")
+        if raw
+          messages.push(row)
+        else 
+          messages.push(row["m"]) if row.has_key?("m")
+        end
         break if limit == 0
       }
       end
@@ -136,7 +152,11 @@ class MongoTopic < Topic
       # TODO: Intuitive filtering
       @coll.find(filter).each { |row| 
         limit -= 1 unless limit.nil?
-        messages.push(row["m"]) if row.has_key?("m")
+        if raw
+          messages.push(row)
+        else 
+          messages.push(row["m"]) if row.has_key?("m")
+        end
         break if limit == 0
       }
     end
@@ -146,6 +166,8 @@ end
 
 class MongoChat < MongoTopic
   
+  alias :super_add :add
+  
   def initialize(room, db)
     super(room,db)
     
@@ -153,11 +175,28 @@ class MongoChat < MongoTopic
     
   end
   
+  def notify(message)
+    # <!-- %%ALL%% -->
+    target = message.match(/\<\!-- \%\%(.*)\%\% --\>/)[1]
+  
+    @connections.each { |out| out << self.format_message(message) }
+  end
+  
+  def add(message, options = nil)
+    from  = options[:from]  || nil
+    style = options[:style] || nil
+    user  = options[:user]  || nil
+    # user = nil goes to all subscribers
+    formatted_message = self.format_message(message, from, style, user)
+    self.super_add(formatted_message)
+    
+  end
+  
   def format_message(message, from, style, user = nil)
     # user = nil goes to all subscribers
-    prefix = "<p><b>#{from} #{style} to"
-    prefix += " all users</b>" if user.nil?
-    prefix += " #{user}" unless user.nil?
+    prefix = "<p><b>#{from} #{style}"
+    prefix += " all users<!-- %%ALL%% --></b>" if user.nil?
+    prefix += " #{user}<!-- %%#{user}%% -->" unless user.nil?
       
     suffix = "</p>"
 
