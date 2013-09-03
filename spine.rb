@@ -79,25 +79,33 @@ class MongoTopic < Topic
     @connections.each { |out| out << self.format_message(message) }
   end
   
-  def refresh(notify_connections = false)
-    if notify_connections and !!@connections.count
+  def refresh(options = { :notify_connections => false })
+    
+    # Mangle options to pass to read
+    read_options = options
+    read_options.delete(:notify_connections)
+    
+    
+    if options[:notify_connections] and !!@connections.count
       # They want us to tell the >= 1 connections
-      new_history=self.read
+      new_history=self.read(read_options)
       hist_diff=new_history-@history
       hist_diff.each do |entry|
-        self.notify(self.format_message(entry)) #TODO: If the user is applicable for the connection
+        self.notify(entry) #  Notify needs to be user aware, if applicable
       end
       @history=new_history
       @count = @history.count
     else
       # Speedy
-      @history = self.read
+      @history = self.read(read_options)
       @count = @history.count
     end
   end
   
-  def add(entry, options = nil)
+  def add(entry, options = {})
     doc = Hash.new
+    refresh_options = options
+    refresh_options[:notify_connections => true]
     if(options.has_key?(:raw) and options[:raw] == true) 
       doc = entry
     else
@@ -105,15 +113,15 @@ class MongoTopic < Topic
     end
     @coll.insert(doc)
     @last_updated = Time.now
-    self.refresh(true)
+    self.refresh(refresh_options)
   end
   
-  def read(options = nil)
+  def read(options = {})
     messages = Array.new
     
-    filter = options[:filter] unless options.nil? || nil
-    limit  = options[:limit]  unless options.nil? || nil
-    raw    = options[:raw]    unless options.nil? || nil
+    filter = options[:filter] || nil
+    limit  = options[:limit]  || nil
+    raw    = options[:raw]    || nil
     
     if filter.nil?
       # All of it
@@ -163,18 +171,34 @@ end
 
 class MongoChat < MongoTopic
 
-  def initialize(room, db)
+  def initialize(room, db, key, iv)
     super(room,db)
     
+    @key = key
+    @iv = iv
     @HEARTBEAT = "<!-- OK -->\n"
     
   end
   
-  def notify(message)
-    # <!-- %%ALL%% -->
-    target = message.match(/\<\!-- \%\%(.*)\%\% --\>/)[1]
+  def user_from_connection(connection)
+    cookie = connection.instance_variable_get(:@app).request.cookies['session']
+    t = SecureToken.new(@key,@iv)
+    t.from_token(cookie,true)
+    return t.payload 
+  end
   
-    @connections.each { |out| out << self.format_message(message) }
+  def notify(message)
+    
+    @connections.each do |out|
+      if(!message.has_key?(:user) or message[:user].nil? or message[:user] == :all)
+        # Broadcast
+        out << self.format_message(message)
+      else 
+        # Unicast
+        this_user = self.user_from_connection(out)
+        out << self.format_message(message) if this_user == message[:user]   
+      end
+    end
   end
   
   def format_message(entry)
