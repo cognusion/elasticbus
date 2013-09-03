@@ -25,13 +25,6 @@ topics = Hash.new
 topics["general"] = MongoTopic.new("general",db) # Make sure we always have our base channel
 topics["registrations"] = MongoTopic.new("registrations",db)
 
-  # TODO: Rethink broadcasts
-def broadcast(topics,message)
-  topics.keys.each do |topic|
-    topics[topic].add("event: broadcast\ndata: #{message}\n\n")
-  end
-end
-
 def blast(topics,topic,message)
   topics[topic] = MongoTopic.new(topic,db) unless topics.has_key?(topic)
   topics[topic].add(message)
@@ -118,12 +111,12 @@ get '/subscribe/:topic/:epoch_stamp', :provides => 'text/event-stream' do |topic
    
   stream :keep_open do |out|
     # Dump all of the historical
-    topics[topic].read("since:#{epoch}").each do |message|
+    topics[topic].read({ :filter => "since:#{epoch}" }).each do |message|
       out << topics[topic].format_message(message)
     end 
     
     # Carry on
-    EventMachine::PeriodicTimer.new(20) { out << HEARTBEAT }
+    EventMachine::PeriodicTimer.new(20) { out << topics[topic].HEARTBEAT }
     topics[topic].connections << out
     out.callback { topics[topic].connections.delete(out) }
   end
@@ -172,13 +165,6 @@ get '/publish/:topic/:message' do |topic,message|
   topics[topic].add(message)
   # Bodiless ok
   204
-end
-
-# Should be POST or LINK
-get '/broadcast/:message' do |message|
-  broadcast(topics,message)
-  
-  "message received"
 end
 
 =begin
