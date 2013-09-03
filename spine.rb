@@ -3,7 +3,6 @@
 require 'mongo'
 require 'bson'
 require 'json'
-require 'sanitize'
 
 include Mongo # Import mongo symbols for convenience
 
@@ -49,7 +48,7 @@ class MongoTopic < Topic
     end
     
     @connections = Array.new
-    @HEARTBEAT = "\0" #"<!-- OK -->\n"
+    @HEARTBEAT = "\0"
     self.refresh
     
     ObjectSpace.define_finalizer(self, proc { @coll = nil; @connections=nil; @db=nil } )
@@ -86,7 +85,7 @@ class MongoTopic < Topic
       new_history=self.read
       hist_diff=new_history-@history
       hist_diff.each do |entry|
-        self.notify(entry)
+        self.notify(self.format_message(entry)) #TODO: If the user is applicable for the connection
       end
       @history=new_history
       @count = @history.count
@@ -112,9 +111,9 @@ class MongoTopic < Topic
   def read(options = nil)
     messages = Array.new
     
-    filter = options[:filter] || nil
-    limit  = options[:limit]  || nil
-    raw    = options[:raw]    || nil
+    filter = options[:filter] unless options.nil? || nil
+    limit  = options[:limit]  unless options.nil? || nil
+    raw    = options[:raw]    unless options.nil? || nil
     
     if filter.nil?
       # All of it
@@ -163,9 +162,7 @@ class MongoTopic < Topic
 end
 
 class MongoChat < MongoTopic
-  
-  alias :super_add :add
-  
+
   def initialize(room, db)
     super(room,db)
     
@@ -180,16 +177,6 @@ class MongoChat < MongoTopic
     @connections.each { |out| out << self.format_message(message) }
   end
   
-  def add(message, options = nil)
-    from  = options[:from]  || nil
-    style = options[:style] || nil
-    user  = options[:user]  || nil
-    # user = nil goes to all subscribers
-    formatted_message = self.format_message(message, from, style, user)
-    self.super_add(formatted_message)
-    
-  end
-  
   def format_message(message, from, style, user = nil)
     # user = nil goes to all subscribers
     prefix = "<p><b>#{from} #{style}"
@@ -197,9 +184,6 @@ class MongoChat < MongoTopic
     prefix += " #{user}<!-- %%#{user}%% -->" unless user.nil?
       
     suffix = "</p>"
-
-    # TODO: Play with the presets, and customize if needed
-    message = Sanitize.clean(message, Sanitize::Config::RELAXED)
 
     return prefix + message + suffix
   end
