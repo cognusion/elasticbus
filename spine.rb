@@ -23,8 +23,24 @@ class Topic
     @count += 1
   end
   
-  def read
-    @history
+  def read(options = {})
+    
+    messages = Array.new()
+    
+    limit  = options[:limit]  || nil
+    
+    if limit.nil?
+      # All of it
+      return @history
+    else
+      # Some of it
+      @history.each do |item|
+        limit -= 1 unless limit.nil?
+        messages.push(item)
+        break if limit == 0
+      end
+      return messages
+    end
   end
   
 end
@@ -33,6 +49,7 @@ class MongoTopic < Topic
  
   attr_accessor :connections, :HEARTBEAT
   
+  #override Topic
   def initialize(name, db)
     super(name)
     
@@ -54,6 +71,18 @@ class MongoTopic < Topic
     ObjectSpace.define_finalizer(self, proc { @coll = nil; @connections=nil; @db=nil } )
   end
   
+  def connected
+    users = Array.new
+    @connections.each do |out| 
+      # TODO: something standard
+    end
+    return users
+  end
+  
+  def connected?
+    !!@connections.count
+  end
+  
   def topics
     colls = @db.collection_names
     topics = Array.new
@@ -63,10 +92,6 @@ class MongoTopic < Topic
       end
     end
     return topics
-  end
-  
-  def empty?
-    !!@connections.count
   end
   
   def format_message(message, event = false)
@@ -102,6 +127,7 @@ class MongoTopic < Topic
     end
   end
   
+  #override Topic
   def add(entry, options = {})
     doc = Hash.new
     refresh_options = options
@@ -116,6 +142,7 @@ class MongoTopic < Topic
     self.refresh(refresh_options)
   end
   
+  #override Topic
   def read(options = {})
     messages = Array.new
     
@@ -171,6 +198,7 @@ end
 
 class MongoChat < MongoTopic
 
+  #override MongoTopic
   def initialize(room, db, key, iv)
     super(room,db)
     
@@ -180,6 +208,15 @@ class MongoChat < MongoTopic
     
   end
   
+  #override MongoTopic
+  def connected
+    users = Array.new
+    @connections.each do |out| 
+      users.push(self.user_from_connection(out))
+    end
+    return users
+  end
+  
   def user_from_connection(connection)
     cookie = connection.instance_variable_get(:@app).request.cookies['session']
     t = SecureToken.new(@key,@iv)
@@ -187,6 +224,7 @@ class MongoChat < MongoTopic
     return t.payload 
   end
   
+  #override MongoTopic
   def notify(message)
     
     @connections.each do |out|
@@ -201,6 +239,7 @@ class MongoChat < MongoTopic
     end
   end
   
+  #override MongoTopic
   def format_message(entry)
     # Assumes all variables properly 
     # Sanitized before passing!!!
