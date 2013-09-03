@@ -177,11 +177,18 @@ class MongoChat < MongoTopic
     @connections.each { |out| out << self.format_message(message) }
   end
   
-  def format_message(message, from, style, user = nil)
+  def format_message(entry)
+    # Assumes all variables properly 
+    # Sanitized before passing!!!
+    message = entry[:message]
+    from    = entry[:from]
+    style   = entry[:style]
+    user    = entry[:user] if entry.has_key?(:user) || nil
+    
     # user = nil goes to all subscribers
     prefix = "<p><b>#{from} #{style}"
-    prefix += " all users<!-- %%ALL%% --></b>" if user.nil?
-    prefix += " #{user}<!-- %%#{user}%% -->" unless user.nil?
+    prefix += " Everyone</b>" if user.nil?
+    prefix += " #{user}" unless user.nil?
       
     suffix = "</p>"
 
