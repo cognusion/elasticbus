@@ -4,7 +4,7 @@
 <head>
 <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
 
-<title>class Object - RDoc Documentation</title>
+<title>module Sanitize - RDoc Documentation</title>
 
 <link type="text/css" media="screen" href="./rdoc.css" rel="stylesheet">
 
@@ -20,7 +20,7 @@
 <script type="text/javascript" charset="utf-8" src="./js/darkfish.js"></script>
 
 
-<body id="top" class="class">
+<body id="top" class="module">
 <nav id="metadata">
   <nav id="home-section" class="section">
   <h3 class="section-header">
@@ -49,9 +49,7 @@
     <nav id="file-list-section" class="section">
   <h3 class="section-header">Defined In</h3>
   <ul>
-    <li>elasticbus.rb
     <li>elasticchat.rb
-    <li>spine.rb
   </ul>
 </nav>
 
@@ -60,38 +58,10 @@
 
   <div id="class-metadata">
     
-    <nav id="parent-class-section" class="section">
-  <h3 class="section-header">Parent</h3>
-  
-  <p class="link">BasicObject
-  
-</nav>
-
-    <!-- Included Modules -->
-<nav id="includes-section" class="section">
-  <h3 class="section-header">Included Modules</h3>
-
-  <ul class="link-list">
-  
-  
-    <li><span class="include">Mongo</span>
-  
-  
-  </ul>
-</nav>
-
     
-    <!-- Method Quickref -->
-<nav id="method-list-section" class="section">
-  <h3 class="section-header">Methods</h3>
-
-  <ul class="link-list">
     
-    <li ><a href="#method-i-blast">#blast</a>
     
-  </ul>
-</nav>
-
+    
   </div>
 
   <div id="project-metadata">
@@ -141,7 +111,7 @@
 </nav>
 
 <div id="documentation">
-  <h1 class="class">class Object</h1>
+  <h1 class="module">module Sanitize</h1>
 
   <div id="description" class="description">
     
@@ -161,46 +131,6 @@
 
     <!-- Methods -->
     
-     <section id="public-instance-5Buntitled-5D-method-details" class="method-section section">
-      <h3 class="section-header">Public Instance Methods</h3>
-
-    
-      <div id="method-i-blast" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">blast</span><span
-            class="method-args">(topics,topic,message)</span>
-          
-          <span class="method-click-advice">click to toggle source</span>
-          
-        </div>
-        
-
-        <div class="method-description">
-          
-          
-          
-          
-
-          
-          <div class="method-source-code" id="blast-source">
-            <pre><span class="ruby-comment"># File elasticbus.rb, line 28</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">blast</span>(<span class="ruby-identifier">topics</span>,<span class="ruby-identifier">topic</span>,<span class="ruby-identifier">message</span>)
-  <span class="ruby-identifier">topics</span>[<span class="ruby-identifier">topic</span>] = <span class="ruby-constant">MongoTopic</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">topic</span>,<span class="ruby-identifier">db</span>) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">topics</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-identifier">topic</span>)
-  <span class="ruby-identifier">topics</span>[<span class="ruby-identifier">topic</span>].<span class="ruby-identifier">add</span>(<span class="ruby-identifier">message</span>)
-<span class="ruby-keyword">end</span></pre>
-          </div><!-- blast-source -->
-          
-        </div>
-
-        
-
-        
-      </div><!-- blast-method -->
-
-    
-    </section><!-- public-instance-method-details -->
-  
   </section><!-- 5Buntitled-5D -->
 
 </div><!-- documentation -->

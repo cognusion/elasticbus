@@ -49,7 +49,7 @@
     <nav id="file-list-section" class="section">
   <h3 class="section-header">Defined In</h3>
   <ul>
-    <li>spine.rb
+    <li>tokens.rb
   </ul>
 </nav>
 
@@ -116,6 +116,10 @@
   
     <li><a href="./Object.html">Object</a>
   
+    <li><a href="./Sanitize.html">Sanitize</a>
+  
+    <li><a href="./Sanitize/Config.html">Sanitize::Config</a>
+  
     <li><a href="./SecureToken.html">SecureToken</a>
   
     <li><a href="./Token.html">Token</a>
@@ -180,7 +184,7 @@ via URIs, create session tokens, etc.</p>
 
           
           <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File spine.rb, line 204</span>
+            <pre><span class="ruby-comment"># File tokens.rb, line 39</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">key</span>, <span class="ruby-identifier">iv</span>)
   <span class="ruby-keyword">super</span>()
   
@@ -223,7 +227,7 @@ via URIs, create session tokens, etc.</p>
 
           
           <div class="method-source-code" id="from_token-source">
-            <pre><span class="ruby-comment"># File spine.rb, line 229</span>
+            <pre><span class="ruby-comment"># File tokens.rb, line 64</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">from_token</span>(<span class="ruby-identifier">token</span>,<span class="ruby-identifier">base64_decode</span> = <span class="ruby-keyword">false</span>)
   
   <span class="ruby-identifier">token</span> = <span class="ruby-constant">Base64</span>.<span class="ruby-identifier">urlsafe_decode64</span>(<span class="ruby-identifier">token</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">base64_decode</span>
@@ -262,7 +266,7 @@ via URIs, create session tokens, etc.</p>
 
           
           <div class="method-source-code" id="to_e-source">
-            <pre><span class="ruby-comment"># File spine.rb, line 212</span>
+            <pre><span class="ruby-comment"># File tokens.rb, line 47</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">to_e</span>(<span class="ruby-identifier">base64_encode</span> = <span class="ruby-keyword">false</span>)
   <span class="ruby-ivar">@aes</span>.<span class="ruby-identifier">encrypt</span>
   <span class="ruby-ivar">@aes</span>.<span class="ruby-identifier">key</span> = <span class="ruby-ivar">@key</span>
@@ -301,7 +305,7 @@ supplied)  else true</p>
 
           
           <div class="method-source-code" id="verify-source">
-            <pre><span class="ruby-comment"># File spine.rb, line 223</span>
+            <pre><span class="ruby-comment"># File tokens.rb, line 58</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">verify</span>(<span class="ruby-identifier">test_secret</span> = <span class="ruby-keyword">false</span>, <span class="ruby-identifier">time_tolerance_seconds</span> = <span class="ruby-value">60</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@timestamp</span>.<span class="ruby-identifier">to_i</span><span class="ruby-operator">+</span><span class="ruby-identifier">time_tolerance_seconds</span>.<span class="ruby-identifier">to_i</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">utc</span>.<span class="ruby-identifier">to_i</span>
   <span class="ruby-keyword">return</span> <span class="ruby-operator">!</span><span class="ruby-operator">!</span>(<span class="ruby-ivar">@payload</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">test_secret</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">test_secret</span> 

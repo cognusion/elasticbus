@@ -49,7 +49,7 @@
     <nav id="file-list-section" class="section">
   <h3 class="section-header">Defined In</h3>
   <ul>
-    <li>spine.rb
+    <li>tokens.rb
   </ul>
 </nav>
 
@@ -117,6 +117,10 @@
     <li><a href="./MongoTopic.html">MongoTopic</a>
   
     <li><a href="./Object.html">Object</a>
+  
+    <li><a href="./Sanitize.html">Sanitize</a>
+  
+    <li><a href="./Sanitize/Config.html">Sanitize::Config</a>
   
     <li><a href="./SecureToken.html">SecureToken</a>
   
@@ -235,7 +239,7 @@
 
           
           <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File spine.rb, line 175</span>
+            <pre><span class="ruby-comment"># File tokens.rb, line 10</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>
   <span class="ruby-ivar">@separator</span> = <span class="ruby-string">&quot;\t&quot;</span>
   <span class="ruby-ivar">@payload</span> = <span class="ruby-keyword">nil</span>
@@ -277,7 +281,7 @@
 
           
           <div class="method-source-code" id="from_a-source">
-            <pre><span class="ruby-comment"># File spine.rb, line 190</span>
+            <pre><span class="ruby-comment"># File tokens.rb, line 25</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">from_a</span>(<span class="ruby-identifier">an_array</span>)
   <span class="ruby-ivar">@payload</span>, <span class="ruby-ivar">@timestamp</span>, <span class="ruby-ivar">@nonce</span> = <span class="ruby-identifier">an_array</span>
 <span class="ruby-keyword">end</span></pre>
@@ -310,7 +314,7 @@
 
           
           <div class="method-source-code" id="from_s-source">
-            <pre><span class="ruby-comment"># File spine.rb, line 194</span>
+            <pre><span class="ruby-comment"># File tokens.rb, line 29</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">from_s</span>(<span class="ruby-identifier">a_string</span>)
   <span class="ruby-ivar">@payload</span>, <span class="ruby-ivar">@timestamp</span>, <span class="ruby-ivar">@nonce</span> = <span class="ruby-identifier">a_string</span>.<span class="ruby-identifier">split</span>(<span class="ruby-ivar">@separator</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -343,7 +347,7 @@
 
           
           <div class="method-source-code" id="to_a-source">
-            <pre><span class="ruby-comment"># File spine.rb, line 186</span>
+            <pre><span class="ruby-comment"># File tokens.rb, line 21</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">to_a</span>
   [<span class="ruby-ivar">@payload</span>, <span class="ruby-ivar">@timestamp</span>, <span class="ruby-ivar">@nonce</span>]
 <span class="ruby-keyword">end</span></pre>
@@ -376,7 +380,7 @@
 
           
           <div class="method-source-code" id="to_s-source">
-            <pre><span class="ruby-comment"># File spine.rb, line 182</span>
+            <pre><span class="ruby-comment"># File tokens.rb, line 17</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">to_s</span>
   [<span class="ruby-ivar">@payload</span>, <span class="ruby-ivar">@timestamp</span>, <span class="ruby-ivar">@nonce</span>].<span class="ruby-identifier">join</span>(<span class="ruby-ivar">@separator</span>)
 <span class="ruby-keyword">end</span></pre>
