@@ -1,0 +1,13 @@
+
+%form{ :action => "/publish/test", :method => "post"}
+  %fieldset
+    %label #{username}:
+    %select{:name => "style"}
+      %option says to
+      %option WHISPSERS TO"
+    %select{:name => "to"}
+      %option EVERYONE
+      %option user1
+      %option user2
+    %input{:type => "text", :name => "message", :class => "text"}         
+    %input{:type => "submit", :value => "Send", :class => "button"}

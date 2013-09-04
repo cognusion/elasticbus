@@ -1,0 +1,4 @@
+
+%frameset{:rows => "10%,90%"}
+  %frame{:src => "/chat/#{topic}"}
+  %frame{:src => "/subscribe/#{topic}/#{Time.now.utc.to_i-300}"}
