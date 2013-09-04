@@ -266,9 +266,9 @@ class MongoChat < MongoTopic
     from    = entry['from']
     style   = entry['style']
     user    = entry['user'] if entry.has_key?('user') || nil
-    
+    stamp   = entry['_id'].generation_time.strftime "%H:%M:%S"
     # user = nil goes to all subscribers
-    prefix = "<p><b>#{from} #{style}"
+    prefix = "<p><b>(#{stamp}) #{from} #{style}"
     prefix += " Everyone" if user.nil?
     prefix += " #{user}" unless user.nil?
     prefix += "</b>:  "
