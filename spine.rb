@@ -106,15 +106,19 @@ class MongoTopic < Topic
   
   def refresh(options = { :notify_connections => false })
     
+    notify_connections = options[:notify_connections]
+      
     # Mangle options to pass to read
     read_options = options
     read_options.delete(:notify_connections)
-    
-    
-    if options[:notify_connections] and !!@connections.count
+   
+    if notify_connections
       # They want us to tell the >= 1 connections
+      #puts "OLD:\n" + @history.join("\n") + "/OLD\n"
       new_history=self.read(read_options)
+      #puts "NEW:\n" + new_history.join("\n") + "/NEW\n"
       hist_diff=new_history-@history
+      #puts "DIFF:\n" + hist_diff.join("\n") + "/DIFF\n"
       hist_diff.each do |entry|
         self.notify(entry) #  Notify needs to be user aware, if applicable
       end
@@ -131,7 +135,7 @@ class MongoTopic < Topic
   def add(entry, options = {})
     doc = Hash.new
     refresh_options = options
-    refresh_options[:notify_connections => true]
+    refresh_options[:notify_connections] = true
     if(options.has_key?(:raw) and options[:raw] == true) 
       doc = entry
     else
@@ -205,6 +209,7 @@ class MongoChat < MongoTopic
     @key = key
     @iv = iv
     @HEARTBEAT = "<!-- OK -->\n"
+    @history = self.read({:raw => true })
     
   end
   
@@ -228,30 +233,38 @@ class MongoChat < MongoTopic
   def notify(message)
     
     @connections.each do |out|
-      if(!message.has_key?(:user) or message[:user].nil? or message[:user] == :all)
-        # Broadcast
-        out << self.format_message(message)
-      else 
-        # Unicast
-        this_user = self.user_from_connection(out)
-        out << self.format_message(message) if this_user == message[:user]   
-      end
+        out << self.format_message(message) if self.to_me?(message,out)
+    end
+    
+  end
+  
+  def to_me?(message,connection)
+    if(!message.has_key?('user') or message['user'].nil? or message['user'] == 'all')
+      return true
+    else 
+      # Unicast
+      this_user = self.user_from_connection(connection)
+      return true if this_user == message['user']   
+      return false
     end
   end
   
+  
   #override MongoTopic
   def format_message(entry)
+    return if entry.nil?
     # Assumes all variables properly 
     # Sanitized before passing!!!
-    message = entry[:message]
-    from    = entry[:from]
-    style   = entry[:style]
-    user    = entry[:user] if entry.has_key?(:user) || nil
+    message = entry['message'] || "empty"
+    from    = entry['from']
+    style   = entry['style']
+    user    = entry['user'] if entry.has_key?('user') || nil
     
     # user = nil goes to all subscribers
     prefix = "<p><b>#{from} #{style}"
-    prefix += " Everyone</b>" if user.nil?
+    prefix += " Everyone" if user.nil?
     prefix += " #{user}" unless user.nil?
+    prefix += "</b>:  "
       
     suffix = "</p>"
 
