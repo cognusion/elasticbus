@@ -1,9 +1,12 @@
-Tue, 03 Sep 2013 22:50:41 -0400
-./doc/created.rid	Tue, 03 Sep 2013 22:50:41 -0400
+Wed, 04 Sep 2013 07:58:57 -0400
+./doc/created.rid	Wed, 04 Sep 2013 07:58:57 -0400
 ./ElasticBus.png	Fri, 30 Aug 2013 09:55:23 -0400
 ./elasticbus.rb	Tue, 03 Sep 2013 19:07:50 -0400
-./elasticchat.rb	Tue, 03 Sep 2013 22:11:58 -0400
-./Notes.md	Sat, 31 Aug 2013 00:15:33 -0400
+./elasticchat.rb	Wed, 04 Sep 2013 07:57:52 -0400
+./Notes.md	Wed, 04 Sep 2013 07:06:47 -0400
 ./README.md	Fri, 30 Aug 2013 09:13:47 -0400
-./spine.rb	Tue, 03 Sep 2013 22:09:50 -0400
+./spine.rb	Wed, 04 Sep 2013 07:04:49 -0400
 ./tokens.rb	Mon, 02 Sep 2013 14:34:00 -0400
+./views/chatindex.haml	Wed, 04 Sep 2013 06:42:46 -0400
+./views/chattop.haml	Wed, 04 Sep 2013 07:43:52 -0400
+./views/room.haml	Wed, 04 Sep 2013 06:36:03 -0400

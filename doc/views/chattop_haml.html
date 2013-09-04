@@ -4,7 +4,7 @@
 <head>
 <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
 
-<title>module Sanitize::Config - RDoc Documentation</title>
+<title>chattop.haml - RDoc Documentation</title>
 
 <link type="text/css" media="screen" href="../rdoc.css" rel="stylesheet">
 
@@ -20,7 +20,7 @@
 <script type="text/javascript" charset="utf-8" src="../js/darkfish.js"></script>
 
 
-<body id="top" class="module">
+<body class="file">
 <nav id="metadata">
   <nav id="home-section" class="section">
   <h3 class="section-header">
@@ -44,25 +44,6 @@
 
 
   
-
-  <div id="file-metadata">
-    <nav id="file-list-section" class="section">
-  <h3 class="section-header">Defined In</h3>
-  <ul>
-    <li>elasticchat.rb
-  </ul>
-</nav>
-
-    
-  </div>
-
-  <div id="class-metadata">
-    
-    
-    
-    
-    
-  </div>
 
   <div id="project-metadata">
     <nav id="fileindex-section" class="section project-section">
@@ -116,30 +97,34 @@
   </div>
 </nav>
 
-<div id="documentation">
-  <h1 class="module">module Sanitize::Config</h1>
-
-  <div id="description" class="description">
-    
-  </div><!-- description -->
-
+<div id="documentation" class="description">
   
-  
-  
-  <section id="5Buntitled-5D" class="documentation-section">
-    
+<p>:javascript</p>
 
-    
+<pre>window.onload = function() { 
+  document.getElementById(&quot;message&quot;).focus(); 
+}</pre>
 
-    
+<p>%form{ :action =&gt; “/publish/test”, :method =&gt; “post”}</p>
 
-    
+<pre class="ruby"><span class="ruby-operator">%</span><span class="ruby-identifier">ieldset</span>
+  <span class="ruby-operator">%</span><span class="ruby-identifier">abel</span> <span class="ruby-comment">#{username}:</span>
+  <span class="ruby-value">%sle</span><span class="ruby-identifier">ct</span>{:<span class="ruby-identifier">name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;style&quot;</span>}
+    <span class="ruby-operator">%</span><span class="ruby-identifier">ption</span> <span class="ruby-identifier">says</span> <span class="ruby-identifier">to</span>
+    <span class="ruby-operator">%</span><span class="ruby-identifier">ption</span> <span class="ruby-constant">WHISPSERS</span> <span class="ruby-constant">TO</span><span class="ruby-string">&quot;
+  %select{:name =&gt; &quot;</span><span class="ruby-identifier">to</span><span class="ruby-node">&quot;}
+    - usernames.each do |user|
+      - if lastuser and user == lastuser
+        %option{:selected =&gt; true } #{user}
+      - else
+        %option #{user}
 
-    <!-- Methods -->
-    
-  </section><!-- 5Buntitled-5D -->
+  %input{:type =&gt; &quot;</span><span class="ruby-identifier">text</span><span class="ruby-string">&quot;, :id =&gt; &quot;</span><span class="ruby-identifier">message</span><span class="ruby-string">&quot;, :name =&gt; &quot;</span><span class="ruby-identifier">message</span><span class="ruby-string">&quot;, :class =&gt; &quot;</span><span class="ruby-identifier">text</span><span class="ruby-string">&quot;}         
+  %input{:type =&gt; &quot;</span><span class="ruby-identifier">submit</span><span class="ruby-string">&quot;, :value =&gt; &quot;</span><span class="ruby-constant">Send</span><span class="ruby-string">&quot;, :class =&gt; &quot;</span><span class="ruby-identifier">button</span><span class="ruby-string">&quot;}
+</span></pre>
 
-</div><!-- documentation -->
+</div>
+
 
 
 <footer id="validator-badges">
