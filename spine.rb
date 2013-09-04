@@ -228,7 +228,14 @@ class MongoChat < MongoTopic
     t.from_token(cookie,true)
     return t.payload 
   end
-  
+
+  def user_from_request(request)
+    cookie = request.cookies['session']
+    t = SecureToken.new(@key,@iv)
+    t.from_token(cookie,true)
+    return t.payload 
+  end
+    
   #override MongoTopic
   def notify(message)
     
