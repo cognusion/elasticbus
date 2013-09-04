@@ -51,7 +51,11 @@ get '/chat/:topic' do |topic|
   
   username = topics[topic].user_from_request(request)
   
-  haml :chattop, :locals => { :username => username, :topic => topic }
+  # Build the array of users we can send to
+  usernames = topics[topic].connected
+  usernames.unshift('EVERYONE')
+
+  haml :chattop, :locals => { :username => username, :topic => topic, :lastuser => 'EVERYONE', :usernames => usernames }
 end
 
 get '/subscribe/:topic/:epoch_stamp', :provides => 'text/html' do |topic,epoch|
@@ -64,9 +68,20 @@ get '/subscribe/:topic/:epoch_stamp', :provides => 'text/html' do |topic,epoch|
     end 
     
     # Carry on
-    EventMachine::PeriodicTimer.new(20) { out << topics[topic].HEARTBEAT }
+    cardio = EventMachine::PeriodicTimer.new(20) do
+      begin
+        out << topics[topic].HEARTBEAT
+      rescue
+        cardio.cancel
+      end
+    end
+    
     topics[topic].connections << out
-    out.callback { topics[topic].connections.delete(out) }
+    
+    out.callback do
+      topics[topic].connections.delete(out)
+      cardio.cancel
+    end
   end
 
 end
@@ -75,9 +90,20 @@ get '/subscribe/:topic', :provides => 'text/html' do |topic|
   topics[topic] = MongoChat.new(topic,db,key,iv) unless topics.has_key?(topic)
     
   stream :keep_open do |out|
-    EventMachine::PeriodicTimer.new(20) { out << topics[topic].HEARTBEAT }
+    cardio = EventMachine::PeriodicTimer.new(20) do
+      begin
+        out << topics[topic].HEARTBEAT
+      rescue
+        cardio.cancel
+      end
+    end
+    
     topics[topic].connections << out
-    out.callback { topics[topic].connections.delete(out) }
+    
+    out.callback do
+      topics[topic].connections.delete(out)
+      cardio.cancel
+    end
   end
 
 end
@@ -87,17 +113,27 @@ post '/publish/:topic' do |topic|
   
   message = Sanitize.clean(params[:message], Sanitize::Config::RELAXED)
   style = Sanitize.clean(params[:style], Sanitize::Config::RESTRICTED)
-  toUser = Sanitize.clean(params[:to], Sanitize::Config::RESTRICTED)
-  toUser = nil if toUser == 'EVERYONE' or toUser == 'all'
+  user = Sanitize.clean(params[:to], Sanitize::Config::RESTRICTED)
+  if user == 'EVERYONE' or user == 'all'
+    toUser = nil
+  else
+    toUser = user
+  end
    
   # Instantiate the room in this instance if needed
   topics[topic]  = MongoChat.new(topic,db,key,iv) unless topics.has_key?(topic)
 
   username = topics[topic].user_from_request(request)
-  topics[topic].add({:message => message, :from => username, :style => style, :user => toUser }, {:raw => true})
+  unless message.size < 2
+    topics[topic].add({:message => message, :from => username, :style => style, :user => toUser }, {:raw => true})
+  end
+
+  # Build the array of users we can send to
+  usernames = topics[topic].connected
+  usernames.unshift('EVERYONE')
   
   # Carry on
-  haml :chattop, :locals => { :username => username, :topic => topic }
+  haml :chattop, :locals => { :username => username, :topic => topic, :lastuser => user, :usernames => usernames }
   
 end
 
