@@ -18,11 +18,15 @@ class Topic
     
   end
 
+  # Add an entry
   def add(entry, options = nil)
     @history.push(entry)
     @count += 1
   end
   
+  # Read entries. 
+  # Passing options e.g. 
+  # { :limit => 6 } will only read the first 6
   def read(options = {})
     
     messages = Array.new()
@@ -71,6 +75,7 @@ class MongoTopic < Topic
     ObjectSpace.define_finalizer(self, proc { @coll = nil; @connections=nil; @db=nil } )
   end
   
+  # Returns array of connected users
   def connected
     users = Array.new
     @connections.each do |out| 
@@ -79,10 +84,12 @@ class MongoTopic < Topic
     return users
   end
   
+  # Returns boolean if anyone is connected
   def connected?
     !!@connections.count
   end
   
+  # Returns an array of topics
   def topics
     colls = @db.collection_names
     topics = Array.new
@@ -94,16 +101,22 @@ class MongoTopic < Topic
     return topics
   end
   
+  # Formats an SSE message
   def format_message(message, event = false)
     message = "data: #{message}\n\n"
     message = "event: #{event}\n#{message}" if event
     return message
   end
 
+  # Sends a message to all connections
   def notify(message)
     @connections.each { |out| out << self.format_message(message) }
   end
   
+  # Refresh entries. 
+  # Passing options e.g. 
+  # { :notify_connections => true } will notify all connections of new messages
+  # Options are also passed to read()
   def refresh(options = { :notify_connections => false })
     
     notify_connections = options[:notify_connections]

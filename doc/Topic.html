@@ -96,12 +96,6 @@
   
     <li class="file"><a href="./doc/created_rid.html">created.rid</a>
   
-    <li class="file"><a href="./views/chatindex_haml.html">chatindex.haml</a>
-  
-    <li class="file"><a href="./views/chattop_haml.html">chattop.haml</a>
-  
-    <li class="file"><a href="./views/room_haml.html">room.haml</a>
-  
   </ul>
 </nav>
 
@@ -277,13 +271,13 @@
 
         <div class="method-description">
           
-          
+          <p>Add an entry</p>
           
           
 
           
           <div class="method-source-code" id="add-source">
-            <pre><span class="ruby-comment"># File spine.rb, line 21</span>
+            <pre><span class="ruby-comment"># File spine.rb, line 22</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">add</span>(<span class="ruby-identifier">entry</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-ivar">@history</span>.<span class="ruby-identifier">push</span>(<span class="ruby-identifier">entry</span>)
   <span class="ruby-ivar">@count</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
@@ -311,13 +305,14 @@
 
         <div class="method-description">
           
-          
+          <p>Read entries.  Passing options e.g.  { :limit =&gt; 6 } will only read the
+first 6</p>
           
           
 
           
           <div class="method-source-code" id="read-source">
-            <pre><span class="ruby-comment"># File spine.rb, line 26</span>
+            <pre><span class="ruby-comment"># File spine.rb, line 30</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">read</span>(<span class="ruby-identifier">options</span> = {})
   
   <span class="ruby-identifier">messages</span> = <span class="ruby-constant">Array</span>.<span class="ruby-identifier">new</span>()
