@@ -239,21 +239,21 @@ class MongoChat < MongoTopic
     cookie = connection.instance_variable_get(:@app).request.cookies['session']
     t = SecureToken.new(@key,@iv)
     t.from_token(cookie,true)
-    return t.payload.split(':')[0]
+    return t.payload.split(':',2)[0]
   end
 
   def user_from_request(request)
     cookie = request.cookies['session']
     t = SecureToken.new(@key,@iv)
     t.from_token(cookie,true)
-    return t.payload.split(':')[0]
+    return t.payload.split(':',2)[0]
   end
   
   def displayuser_from_request(request)
     cookie = request.cookies['session']
     t = SecureToken.new(@key,@iv)
     t.from_token(cookie,true)
-    return t.payload.split(':')[1]
+    return t.payload.split(':',2)[1]
   end
     
   #override MongoTopic

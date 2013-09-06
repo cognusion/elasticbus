@@ -278,7 +278,7 @@
   <span class="ruby-identifier">cookie</span> = <span class="ruby-identifier">request</span>.<span class="ruby-identifier">cookies</span>[<span class="ruby-string">&#39;session&#39;</span>]
   <span class="ruby-identifier">t</span> = <span class="ruby-constant">SecureToken</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@key</span>,<span class="ruby-ivar">@iv</span>)
   <span class="ruby-identifier">t</span>.<span class="ruby-identifier">from_token</span>(<span class="ruby-identifier">cookie</span>,<span class="ruby-keyword">true</span>)
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">t</span>.<span class="ruby-identifier">payload</span>.<span class="ruby-identifier">split</span>(<span class="ruby-string">&#39;:&#39;</span>)[<span class="ruby-value">1</span>]
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">t</span>.<span class="ruby-identifier">payload</span>.<span class="ruby-identifier">split</span>(<span class="ruby-string">&#39;:&#39;</span>,<span class="ruby-value">2</span>)[<span class="ruby-value">1</span>]
 <span class="ruby-keyword">end</span></pre>
           </div><!-- displayuser_from_request-source -->
           
@@ -475,7 +475,7 @@
   <span class="ruby-identifier">cookie</span> = <span class="ruby-identifier">connection</span>.<span class="ruby-identifier">instance_variable_get</span>(<span class="ruby-value">:@app</span>).<span class="ruby-identifier">request</span>.<span class="ruby-identifier">cookies</span>[<span class="ruby-string">&#39;session&#39;</span>]
   <span class="ruby-identifier">t</span> = <span class="ruby-constant">SecureToken</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@key</span>,<span class="ruby-ivar">@iv</span>)
   <span class="ruby-identifier">t</span>.<span class="ruby-identifier">from_token</span>(<span class="ruby-identifier">cookie</span>,<span class="ruby-keyword">true</span>)
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">t</span>.<span class="ruby-identifier">payload</span>.<span class="ruby-identifier">split</span>(<span class="ruby-string">&#39;:&#39;</span>)[<span class="ruby-value">0</span>]
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">t</span>.<span class="ruby-identifier">payload</span>.<span class="ruby-identifier">split</span>(<span class="ruby-string">&#39;:&#39;</span>,<span class="ruby-value">2</span>)[<span class="ruby-value">0</span>]
 <span class="ruby-keyword">end</span></pre>
           </div><!-- user_from_connection-source -->
           
@@ -511,7 +511,7 @@
   <span class="ruby-identifier">cookie</span> = <span class="ruby-identifier">request</span>.<span class="ruby-identifier">cookies</span>[<span class="ruby-string">&#39;session&#39;</span>]
   <span class="ruby-identifier">t</span> = <span class="ruby-constant">SecureToken</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@key</span>,<span class="ruby-ivar">@iv</span>)
   <span class="ruby-identifier">t</span>.<span class="ruby-identifier">from_token</span>(<span class="ruby-identifier">cookie</span>,<span class="ruby-keyword">true</span>)
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">t</span>.<span class="ruby-identifier">payload</span>.<span class="ruby-identifier">split</span>(<span class="ruby-string">&#39;:&#39;</span>)[<span class="ruby-value">0</span>]
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">t</span>.<span class="ruby-identifier">payload</span>.<span class="ruby-identifier">split</span>(<span class="ruby-string">&#39;:&#39;</span>,<span class="ruby-value">2</span>)[<span class="ruby-value">0</span>]
 <span class="ruby-keyword">end</span></pre>
           </div><!-- user_from_request-source -->
           

@@ -35,11 +35,16 @@ post '/login/:topic' do |topic|
   topics[topic] = MongoChat.new(topic,db,key,iv) unless topics.has_key?(topic)
   
   username = Sanitize.clean(params[:name], Sanitize::Config::RESTRICTED)
+  avatar = Sanitize.clean(params[:avatar], Sanitize::Config::RESTRICTED)
+  avatar = nil unless avatar.nil? or avatar.size > 2
+    
   displayname = '<font color="#';
   3.times do 
     displayname += rand(1..255).to_s(16)
   end
   displayname += '">' + username + '</font>'
+  
+  displayname = '<img src="' + avatar + '">  ' + displayname unless avatar.nil?
   
   topics[topic].add({:message => 'I have arrived!', :fromDisplay => displayname, :from => username, :style => 'announces to', :user => nil }, {:raw => true})
 
