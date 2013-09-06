@@ -260,7 +260,7 @@ class MongoChat < MongoTopic
   def notify(message)
     
     @connections.each do |out|
-        out << self.format_message(message) if self.to_me?(message,out)
+        out << self.format_message(message) if self.to_me?(message,out) or self.from_me?(message,out)
     end
     
   end
@@ -275,6 +275,12 @@ class MongoChat < MongoTopic
       return false
     end
   end
+  
+def from_me?(message,connection)
+  this_user = self.user_from_connection(connection)
+  return true if this_user == message['from']   
+  return false
+end
   
   
   #override MongoTopic

@@ -69,7 +69,7 @@ get '/subscribe/:topic/:epoch_stamp', :provides => 'text/html' do |topic,epoch|
   stream :keep_open do |out|
     # Dump all of the historical
     topics[topic].read({ :filter => "since:#{epoch}", :raw => true }).each do |message|
-      out << topics[topic].format_message(message) if topics[topic].to_me?(message,out)
+      out << topics[topic].format_message(message) if topics[topic].to_me?(message,out) or topics[topic].from_me?(message,out)
     end 
     
     # Carry on
