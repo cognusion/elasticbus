@@ -54,7 +54,7 @@ end
 get '/chat/:topic' do |topic|
   topics[topic] = MongoChat.new(topic,db,key,iv) unless topics.has_key?(topic)
   
-  username,displayname = topics[topic].user_from_request(request).split(':')
+  username = topics[topic].user_from_request(request)
   
   # Build the array of users we can send to
   usernames = topics[topic].connected
@@ -128,7 +128,9 @@ post '/publish/:topic' do |topic|
   # Instantiate the room in this instance if needed
   topics[topic]  = MongoChat.new(topic,db,key,iv) unless topics.has_key?(topic)
 
-  username,displayname = topics[topic].user_from_request(request).split(':')
+  username = topics[topic].user_from_request(request)
+  displayname = topics[topic].displayuser_from_request(request)
+
   unless message.size < 2
     topics[topic].add({:message => message, :fromDisplay => displayname, :from => username, :style => style, :user => toUser }, {:raw => true})
   end

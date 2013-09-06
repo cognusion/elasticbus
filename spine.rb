@@ -230,7 +230,7 @@ class MongoChat < MongoTopic
   def connected
     users = Array.new
     @connections.each do |out| 
-      users.push(self.user_from_connection(out).split(':')[0])
+      users.push(self.user_from_connection(out))
     end
     return users
   end
@@ -239,14 +239,21 @@ class MongoChat < MongoTopic
     cookie = connection.instance_variable_get(:@app).request.cookies['session']
     t = SecureToken.new(@key,@iv)
     t.from_token(cookie,true)
-    return t.payload 
+    return t.payload.split(':')[0]
   end
 
   def user_from_request(request)
     cookie = request.cookies['session']
     t = SecureToken.new(@key,@iv)
     t.from_token(cookie,true)
-    return t.payload 
+    return t.payload.split(':')[0]
+  end
+  
+  def displayuser_from_request(request)
+    cookie = request.cookies['session']
+    t = SecureToken.new(@key,@iv)
+    t.from_token(cookie,true)
+    return t.payload.split(':')[1]
   end
     
   #override MongoTopic
@@ -263,7 +270,7 @@ class MongoChat < MongoTopic
       return true
     else 
       # Unicast
-      this_user = self.user_from_connection(connection).split(':')[0]
+      this_user = self.user_from_connection(connection)
       return true if this_user == message['user']   
       return false
     end
