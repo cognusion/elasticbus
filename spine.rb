@@ -230,7 +230,7 @@ class MongoChat < MongoTopic
   def connected
     users = Array.new
     @connections.each do |out| 
-      users.push(self.user_from_connection(out))
+      users.push(self.user_from_connection(out).split(':')[0])
     end
     return users
   end
@@ -263,7 +263,7 @@ class MongoChat < MongoTopic
       return true
     else 
       # Unicast
-      this_user = self.user_from_connection(connection)
+      this_user = self.user_from_connection(connection).split(':')[0]
       return true if this_user == message['user']   
       return false
     end
@@ -276,7 +276,7 @@ class MongoChat < MongoTopic
     # Assumes all variables properly 
     # Sanitized before passing!!!
     message = entry['message'] || "empty"
-    from    = entry['from']
+    from    = entry['fromDisplay']
     style   = entry['style']
     user    = entry['user'] if entry.has_key?('user') || nil
     stamp   = entry['_id'].generation_time.strftime "%H:%M:%S"

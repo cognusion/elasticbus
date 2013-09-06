@@ -35,11 +35,16 @@ post '/login/:topic' do |topic|
   topics[topic] = MongoChat.new(topic,db,key,iv) unless topics.has_key?(topic)
   
   username = Sanitize.clean(params[:name], Sanitize::Config::RESTRICTED)
+  displayname = '<font color="#';
+  3.times do 
+    displayname += rand(1..255).to_s(16)
+  end
+  displayname += '">' + username + '</font>'
   
-  topics[topic].add({:message => 'I have arrived!', :from => username, :style => 'announces to', :user => nil }, {:raw => true})
+  topics[topic].add({:message => 'I have arrived!', :fromDisplay => displayname, :from => username, :style => 'announces to', :user => nil }, {:raw => true})
 
   token = SecureToken.new(key,iv)
-  token.payload = username
+  token.payload = username + ':' + displayname
   cookies[:session] = token.to_e(true)
     
   haml :room, :locals => { :username => username, :topic => topic }
@@ -49,7 +54,7 @@ end
 get '/chat/:topic' do |topic|
   topics[topic] = MongoChat.new(topic,db,key,iv) unless topics.has_key?(topic)
   
-  username = topics[topic].user_from_request(request)
+  username,displayname = topics[topic].user_from_request(request).split(':')
   
   # Build the array of users we can send to
   usernames = topics[topic].connected
@@ -123,9 +128,9 @@ post '/publish/:topic' do |topic|
   # Instantiate the room in this instance if needed
   topics[topic]  = MongoChat.new(topic,db,key,iv) unless topics.has_key?(topic)
 
-  username = topics[topic].user_from_request(request)
+  username,displayname = topics[topic].user_from_request(request).split(':')
   unless message.size < 2
-    topics[topic].add({:message => message, :from => username, :style => style, :user => toUser }, {:raw => true})
+    topics[topic].add({:message => message, :fromDisplay => displayname, :from => username, :style => style, :user => toUser }, {:raw => true})
   end
 
   # Build the array of users we can send to
