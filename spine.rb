@@ -227,6 +227,7 @@ class MongoChat < MongoTopic
   end
   
   #override MongoTopic
+  # TODO: Needs to be cluster-aware
   def connected
     users = Array.new
     @connections.each do |out| 
@@ -235,6 +236,7 @@ class MongoChat < MongoTopic
     return users
   end
   
+  # Return the username, given the connection
   def user_from_connection(connection)
     cookie = connection.instance_variable_get(:@app).request.cookies['session']
     t = SecureToken.new(@key,@iv)
@@ -242,6 +244,7 @@ class MongoChat < MongoTopic
     return t.payload.split(':',2)[0]
   end
 
+  # Return the username, given the request
   def user_from_request(request)
     cookie = request.cookies['session']
     t = SecureToken.new(@key,@iv)
@@ -249,6 +252,7 @@ class MongoChat < MongoTopic
     return t.payload.split(':',2)[0]
   end
   
+  # Return the disaplyname, given the request
   def displayuser_from_request(request)
     cookie = request.cookies['session']
     t = SecureToken.new(@key,@iv)
@@ -257,6 +261,7 @@ class MongoChat < MongoTopic
   end
     
   #override MongoTopic
+  # Notify's users on this instance if a message is broadcast, from them, or to them.
   def notify(message)
     
     @connections.each do |out|
@@ -265,6 +270,7 @@ class MongoChat < MongoTopic
     
   end
   
+  # Return boolean if the specified message is a broadcast, or to the specificed connection
   def to_me?(message,connection)
     if(!message.has_key?('user') or message['user'].nil? or message['user'] == 'all')
       return true
@@ -276,14 +282,16 @@ class MongoChat < MongoTopic
     end
   end
   
-def from_me?(message,connection)
-  this_user = self.user_from_connection(connection)
-  return true if this_user == message['from']   
-  return false
-end
+  # Return boolean if the specified message was from the specificed connection
+  def from_me?(message,connection)
+    this_user = self.user_from_connection(connection)
+    return true if this_user == message['from']   
+    return false
+  end
   
   
   #override MongoTopic
+  # Formats an entry with approporiate HTML trimmings
   def format_message(entry)
     return if entry.nil?
     # Assumes all variables properly 
@@ -305,44 +313,3 @@ end
   end
   
 end
-
-
-
-=begin
-require 'digest/sha2'
-iv =  Digest::SHA2.new(256).digest("FBDfsdfrvyh8i67u5R^V$qc34x123e1w4rcq$Wtaw4twyj")
-key = Digest::SHA2.new(256).digest("asasjhsdfFERt45y4hg3$&kjgfgf$Wsdcvbtymkhl8*r6t")
-
-t = SecureToken.new(key,iv)
-
-t.payload = "I would like a token please"
-
-puts t.to_s
-
-token = t.to_e(true)
-
-x = SecureToken.new(key,iv)
-x.from_token(token,true)
-puts x.to_s()
-puts x.verify("I would like a token please")
-
-=begin
-db = MongoClient.new("localhost", 27017).db("elasticbus")
-
-m = MongoTopic.new('cooking',db)
-
-puts m.connections
-
-=begin
-foods = Hash.new()
-foods[:cake] = :lie
-foods[:pie] =  :yum
-foods[:pasta] = :ok
-foods[:veggies] = :wtf
-m.add(foods)
-puts '---------------'
-puts m.count
-
-puts m.read == m.history
-=end
-

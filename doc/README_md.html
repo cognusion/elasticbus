@@ -105,6 +105,23 @@ Presence, and Communication</p>
 <p>MongoDB</p>
 </li></ul>
 
+<p>&#39;elasticchat&#39; is included as a reference implementation of the bus,
+to aid in debugging during development.
+Just run <code>ruby
+./elasticchat.rb myroom</code> and then hit point your browser at <a
+href="http://localhost:4567">localhost:4567</a>/</p>
+
+<p>Protocol</p>
+<ul><li>
+<p>SSE over <a href="http://S">HTTP</a></p>
+</li><li>
+<p>/register/systemname</p>
+</li><li>
+<p>/subscribe/topic1/systemname .. /subscribe/topicN/systemname</p>
+</li><li>
+<p>/publish/topicX</p>
+</li></ul>
+
 </div>
 
 
