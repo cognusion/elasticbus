@@ -24,11 +24,16 @@ key = Digest::SHA2.new(256).digest("asasjhsdfFERt45y4hg3$&kjgfgf$Wsdcvl8*r6t")
 
 db = MongoClient.new("localhost", 27017).db("elasticchat")
 
+room = "test"
+unless ARGV.empty?
+  room = ARGV.shift
+end
+
 topics = Hash.new
 topics["test"] = MongoChat.new("test",db,key,iv) # Make sure we always have our base channel
   
 get '/' do
-  haml :chatindex
+  haml :chatindex, :locals => { :topic => room }
 end
 
 post '/login/:topic' do |topic|
